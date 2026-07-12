@@ -2,10 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const app = express();
+
+app.set('trust proxy', 1);
+
 const port = process.env.PORT ||3000;
-
 const prisma = require('./lib/db');
-
 
 const authRoutes = require('./routes/auth');
 const oauthRoutes = require('./routes/oauth');
@@ -19,6 +20,7 @@ app.use(passport.initialize());
 
 app.use('/api', authRoutes);
 app.use('/api/auth', oauthRoutes);
+
 
 
 
