@@ -32,11 +32,13 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
   try {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid credentials' });
@@ -60,5 +62,13 @@ router.post('/login', async (req, res) => {
   }
 
 });
+
+const authenticate = require('../middleware/authenticate');
+const requireRole = require('../middleware/requireRole');
+
+router.get('/me', authenticate, requireRole(['CANDIDATE', 'RECRUITER', 'ADMIN']), async (req, res) => {
+  res.json({ user: req.user });
+});
+
 
 module.exports = router;

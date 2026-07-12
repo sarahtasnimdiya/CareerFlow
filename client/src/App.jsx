@@ -1,6 +1,8 @@
 import { Button } from "@heroui/react";
 import { useEffect, useState } from "react";
 
+import RegisterForm from "./RegisterForm";
+
 
 function App() {
   const [health, setHealth] = useState(null);
