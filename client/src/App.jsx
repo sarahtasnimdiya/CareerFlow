@@ -1,7 +1,7 @@
 import { Button } from "@heroui/react";
 import { useEffect, useState } from "react";
 
-import RegisterForm from "./RegisterForm";
+import LoginForm from "./LoginForm";
 
 
 function App() {
@@ -18,6 +18,7 @@ function App() {
     <div className="p-10">
       <Button color="primary">Check Backend Health</Button>
       {health ? <p>backend says: {health.message}</p> : <p>loading...</p>}
+      <LoginForm />
     </div>
   );
 }

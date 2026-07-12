@@ -31,10 +31,16 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { identifier, password } = req.body;
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({ where: {
+      OR: [
+          { email: identifier },
+          { username: identifier }
+        ]
+     }
+   });
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }

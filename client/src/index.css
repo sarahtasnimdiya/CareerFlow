@@ -1,2 +1,10 @@
 @import "tailwindcss";
 @import "@heroui/styles"; 
+
+@theme {
+  --color-ink: #121212;
+  --color-navy: #14213D;
+  --color-orange: #FCA311;
+  --color-gray-light: #E5E5E5;
+  --color-champagne: #F5F0E6;
+}

@@ -1,22 +1,27 @@
 import { useState } from "react";
 import { Button, Input, TextField, Label } from "@heroui/react";
 
-function RegisterForm() {
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
+function LoginForm() {
+    const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
 
     async function handleSubmit(event) {
-        const response = await fetch(import.meta.env.VITE_API_URL + "/api/register", {
+        const response = await fetch(import.meta.env.VITE_API_URL + "/api/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ username, email, password })
+            body: JSON.stringify({ identifier, password })
         });
 
         const data = await response.json();
+
         console.log("Form submitted:", data);
+
+         if (data.token) 
+            {
+            localStorage.setItem("token", data.token);
+        }
     }
 
     return (
@@ -27,17 +32,10 @@ function RegisterForm() {
         <div className="flex-1 bg-champagne flex items-center justify-center">
             <div>
                 <TextField>
-                    <Label>Username</Label>
+                    <Label>Email or Username</Label>
                     <Input
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                </TextField>
-                <TextField>
-                    <Label>Email</Label>
-                    <Input
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={identifier}
+                        onChange={(e) => setIdentifier(e.target.value)}
                     />
                 </TextField>
                 <TextField>
@@ -50,7 +48,7 @@ function RegisterForm() {
                 </TextField>
                 <Button className="bg-orange text-ink font-semibold"
                 onPress={handleSubmit}>
-                    Sign Up
+                    Sign In
                 </Button>
         </div>
     </div>
@@ -58,5 +56,5 @@ function RegisterForm() {
 );
 }
 
-export default RegisterForm;
+export default LoginForm;
      
