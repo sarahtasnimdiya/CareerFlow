@@ -5,38 +5,52 @@ async function main() {
 
     const hashedPassword = await bcrypt.hash('password123', 10);
 
-    await prisma.user.upsert({
-        where: { email: 'candidate@test.com' },
-        update: {},
-        create: {
+    const users = [
+        {
             username: 'Candidate User',
             email: 'candidate@test.com',
             password: hashedPassword,
             role: 'CANDIDATE'
-        }
-    });
-
-    await prisma.user.upsert({
-        where: { email: 'recruiter@test.com' },
-        update: {},
-        create: {
+        },
+        {
             username: 'Recruiter User',
             email: 'recruiter@test.com',
             password: hashedPassword,
             role: 'RECRUITER'
-        }
-    });
-
-    await prisma.user.upsert({
-        where: { email: 'admin@test.com' },
-        update: {},
-        create: {
+        },
+        {
             username: 'Admin User',
             email: 'admin@test.com',
             password: hashedPassword,
             role: 'ADMIN'
         }
+    ];
+
+    for (const user of users) {
+        await prisma.user.upsert({
+            where: { email: user.email },
+            update: {},
+            create: user
+        });
+    }
+    
+    
+    const categoryNames = [
+    'Certification',
+    'Domain Knowledge',
+    'Personal Information',
+    'Technical Skills',
+    'Soft Skills',
+    'Languages'
+    ];
+
+    for (const name of categoryNames) {
+    await prisma.category.upsert({
+        where: { name },
+        update: {},
+        create: { name }
     });
+    }
 
     console.log('Seeding complete');
 }

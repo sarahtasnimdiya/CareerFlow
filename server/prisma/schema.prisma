@@ -18,8 +18,39 @@ model User {
 
 }
 
-enum RoleName{
+enum RoleName {
   CANDIDATE
   RECRUITER
   ADMIN
 } 
+
+model Category {
+  id Int @id @default(autoincrement())
+  name String @unique
+  attributes Attribute[]
+
+}
+
+enum AttributeType {
+  STRING
+  TEXT
+  IMAGE
+  NUMERIC
+  DATE
+  PERIOD
+  BOOLEAN
+  SELECT
+
+}
+
+model Attribute {
+  id Int @id @default(autoincrement())
+  name String @unique
+  description String
+  type AttributeType
+  categoryId Int
+  category Category @relation(fields: [categoryId], references: [id])
+  version Int @default(1)
+  createdAt DateTime @default(now())
+
+}
