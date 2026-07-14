@@ -34,6 +34,28 @@
 
  });
 
+ router.get('/:id', authenticate, async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    try {
+        const attribute = await prisma.attribute.findUnique({
+            where: { id },
+            include: {
+                category: true
+            }
+        });
+
+        if (!attribute) {
+            return res.status(404).json({ message: 'Attribute not found' });
+        }
+        res.json(attribute);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching attribute' });
+    }
+ });
+
  router.post('/', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req, res) => {
 
     const { name, description, type, categoryId } = req.body;

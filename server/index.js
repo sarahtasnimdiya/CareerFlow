@@ -11,6 +11,7 @@ const prisma = require('./lib/db');
 const authRoutes = require('./routes/auth');
 const oauthRoutes = require('./routes/oauth');
 const attributeRoutes = require('./routes/attributes');
+const categoryRoutes = require('./routes/categories');
 
 const passport = require('./config/passport');
 
@@ -22,6 +23,7 @@ app.use(passport.initialize());
 app.use('/api', authRoutes);
 app.use('/api/auth', oauthRoutes);
 app.use('/api/attributes', attributeRoutes);
+app.use('/api/categories', categoryRoutes);
 
 
 
