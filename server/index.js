@@ -12,6 +12,8 @@ const authRoutes = require('./routes/auth');
 const oauthRoutes = require('./routes/oauth');
 const attributeRoutes = require('./routes/attributes');
 const categoryRoutes = require('./routes/categories');
+const positionRoutes = require('./routes/positions');
+
 
 const passport = require('./config/passport');
 
@@ -24,6 +26,7 @@ app.use('/api', authRoutes);
 app.use('/api/auth', oauthRoutes);
 app.use('/api/attributes', attributeRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/positions', positionRoutes);
 
 
 

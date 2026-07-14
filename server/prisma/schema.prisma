@@ -52,5 +52,39 @@ model Attribute {
   category Category @relation(fields: [categoryId], references: [id])
   version Int @default(1)
   createdAt DateTime @default(now())
+  positions PositionAttribute[]
+  accessRules AccessRule[]
 
+}
+
+model Position {
+  id Int @id @default(autoincrement())
+  title String
+  shortDescription String
+  isPublic Boolean @default(true)
+  projectTags String[]
+  maxProjects Int @default(3)
+  version Int @default(1)
+  createdAt DateTime @default(now())
+  attributes PositionAttribute[]
+  accessRules AccessRule[]
+}
+
+model PositionAttribute {
+  id Int @id @default(autoincrement())
+  positionId Int 
+  position Position @relation(fields: [positionId], references: [id], onDelete: Cascade)
+  attributeId Int
+  attribute Attribute @relation(fields: [attributeId], references: [id])
+  
+}
+
+model AccessRule {
+  id Int @id @default(autoincrement())
+  positionId Int
+  position Position @relation(fields: [positionId], references: [id], onDelete: Cascade)
+  attributeId Int
+  attribute Attribute @relation(fields: [attributeId], references: [id])
+  operator String
+  value String
 }

@@ -6,6 +6,9 @@ import NavBar from "./NavBar.jsx";
 import AttributePage from "./AttributePage.jsx";
 import AddAttributePage from "./AddAttributePage.jsx";
 import EditAttributePage from "./EditAttributePage.jsx";
+import PositionPage from "./PositionPage.jsx";
+import AddPositionPage from "./AddPositionPage.jsx";
+import EditPositionPage from "./EditPositionPage.jsx";
 
 
 function App() {
@@ -20,6 +23,9 @@ function App() {
       <Route path="/attributes" element={<AttributePage />} />
       <Route path="/add-attribute" element={<AddAttributePage />} />
       <Route path="/edit-attribute/:id" element={<EditAttributePage />} />
+      <Route path="/positions" element={<PositionPage />} />
+      <Route path="/add-position" element={<AddPositionPage />} />
+      <Route path="/edit-position/:id" element={<EditPositionPage />} />
     </Routes>
     </>
   );
