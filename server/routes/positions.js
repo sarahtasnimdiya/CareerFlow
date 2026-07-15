@@ -8,10 +8,25 @@
 
  router.get('/',authenticate, async (req, res) => {
 
+    const { prefix, attributeId } = req.query;
+    const where = {};
+
+    if (prefix) {
+        where.title = { startsWith: prefix, mode: 'insensitive' };
+    }
+
+    if (attributeId) {
+        where.attributes = {
+            some: { attributeId: parseInt(attributeId) }
+        };
+    }
+
     try {
         const positions = await prisma.position.findMany({
+            where,
             include: {
-                attributes: { include: { attribute: true } }
+                attributes: { include: { attribute: true } },
+                accessRules: { include: { attribute: true } }
             }
         });
         res.json(positions);
@@ -29,7 +44,8 @@ router.get('/:id', authenticate, async (req, res) => {
         const position = await prisma.position.findUnique({
             where: { id },
             include: {
-                attributes: { include: { attribute: true } }
+                attributes: { include: { attribute: true } },
+                accessRules: { include: { attribute: true } }
             }
         });
         if (!position) {
@@ -43,7 +59,7 @@ router.get('/:id', authenticate, async (req, res) => {
 });
 
 router.post('/', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req, res) => {
-    const { title, shortDescription, isPublic, maxProjects,projectTags, attributeIds } = req.body;
+    const { title, shortDescription, isPublic, maxProjects,projectTags, attributeIds, accessRules } = req.body;
     try {
         const position = await prisma.position.create({
             data: {
@@ -54,11 +70,18 @@ router.post('/', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req, 
                 projectTags,
                 attributes: {
                     create: attributeIds.map(attributeId => ({ attributeId }))
-                    }
-
+                    },
+                accessRules: {
+                    create: accessRules.map(rule => ({
+                        attributeId: rule.attributeId,
+                        operator: rule.operator,
+                        value: rule.value
+                    }))
+                }
             },
             include: {
-                attributes: { include: { attribute: true } }
+                attributes: { include: { attribute: true } },
+                accessRules: { include: { attribute: true } }
             }
         });
         res.status(201).json(position);
@@ -70,7 +93,7 @@ router.post('/', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req, 
 
 router.put('/:id', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req, res) => {
     const id = parseInt(req.params.id);
-    const { title, shortDescription, isPublic, maxProjects, projectTags, attributeIds } = req.body;
+    const { title, shortDescription, isPublic, maxProjects, projectTags, attributeIds, accessRules } = req.body;
     try {
         const position = await prisma.position.update({
             where: { id },
@@ -83,10 +106,19 @@ router.put('/:id', authenticate, requireRole(['RECRUITER', 'ADMIN']), async (req
                 attributes: {
                     deleteMany: {  positionId: id } ,
                     createMany: { data: attributeIds.map(attributeId => ({ attributeId })) }
+                },
+                accessRules: {
+                    deleteMany: { positionId: id },
+                    createMany: { data: accessRules.map(rule => ({
+                        attributeId: rule.attributeId,
+                        operator: rule.operator,
+                        value: rule.value
+                    })) }
                 }
             },
             include: {
-                attributes: { include: { attribute: true } }
+                attributes: { include: { attribute: true } },
+                accessRules: { include: { attribute: true } }
             }
         });
         res.json(position);

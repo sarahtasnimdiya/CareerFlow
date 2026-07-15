@@ -79,6 +79,35 @@ function PositionPage() {
       .catch(error => console.error(error));
   }
 
+  function handleDuplicate() {
+      if (!selectedId) return;
+
+      fetchWithAuth(import.meta.env.VITE_API_URL + `/api/positions/${selectedId}`)
+        .then(original => {
+          return fetchWithAuth(import.meta.env.VITE_API_URL + "/api/positions", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: original.title + ' (Copy)',
+              shortDescription: original.shortDescription,
+              isPublic: original.isPublic,
+              maxProjects: original.maxProjects,
+              projectTags: original.projectTags,
+              attributeIds: original.attributes.map(pa => pa.attributeId),
+              accessRules: original.accessRules.map(rule => ({
+                attributeId: rule.attributeId,
+                operator: rule.operator,
+                value: rule.value
+              }))
+            })
+          });
+        })
+        .then(() => {
+          loadPositions();
+        })
+        .catch(error => console.error(error));
+    }
+
   console.log(positions);
 
   return (
@@ -102,6 +131,7 @@ function PositionPage() {
       {(userRole === 'RECRUITER' || userRole === 'ADMIN') && selectedId && (
         <>
           <button onClick={() => navigate(`/edit-position/${selectedId}`)}>Edit</button>
+          <button onClick={handleDuplicate}>Duplicate</button>
           <button onClick={handleDelete}>Delete</button>
         </>
       )}
