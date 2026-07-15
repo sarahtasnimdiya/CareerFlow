@@ -117,6 +117,11 @@ function EditPositionPage() {
         <Input type="number" value={maxProjects} onChange={(e) => setMaxProjects(parseInt(e.target.value))} />
       </div>
 
+      <div className="flex flex-col gap-1">
+        <label>Project Tags (comma-separated)</label>
+        <Input value={projectTags} onChange={(e) => setProjectTags(e.target.value)} />
+      </div>
+
      <div className="flex flex-col gap-1">
         <label>Attributes</label>
         {attributes.map(attribute => (
