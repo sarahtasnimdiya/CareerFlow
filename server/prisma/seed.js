@@ -52,6 +52,22 @@ async function main() {
     });
     }
 
+    const builtInAttrs = [
+    { name: 'First Name', description: 'Given name', type: 'STRING' },
+    { name: 'Last Name', description: 'Family name', type: 'STRING' },
+    { name: 'Location', description: 'City/country', type: 'STRING' },
+    { name: 'Personal Photo', description: 'Profile picture', type: 'IMAGE' }
+    ];
+    const personalInfoCategory = await prisma.category.findUnique({ where: { name: 'Personal Information' } });
+
+    for (const attr of builtInAttrs) {
+    await prisma.attribute.upsert({
+        where: { name: attr.name },
+        update: {},
+        create: { ...attr, categoryId: personalInfoCategory.id, isBuiltIn: true }
+    });
+    }
+
     console.log('Seeding complete');
 }
 

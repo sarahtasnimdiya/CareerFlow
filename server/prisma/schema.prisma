@@ -15,7 +15,9 @@ model User {
   role RoleName
   version Int @default(1)
   createdAt DateTime @default(now())
-
+  profileValues ProfileValue[]
+  projects Project[]
+  cvs CV[]
 }
 
 enum RoleName {
@@ -54,7 +56,8 @@ model Attribute {
   createdAt DateTime @default(now())
   positions PositionAttribute[]
   accessRules AccessRule[]
-
+  profileValues ProfileValue[]
+  isBuiltIn Boolean @default(false)
 }
 
 model Position {
@@ -68,6 +71,7 @@ model Position {
   createdAt DateTime @default(now())
   attributes PositionAttribute[]
   accessRules AccessRule[]
+  cvs CV[]
 }
 
 model PositionAttribute {
@@ -87,4 +91,42 @@ model AccessRule {
   attribute Attribute @relation(fields: [attributeId], references: [id])
   operator String
   value String
+}
+
+model ProfileValue {
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attributeId Int
+  attribute Attribute @relation(fields: [attributeId], references: [id])
+  value String
+  version Int @default(1)
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, attributeId])
+}
+
+model Project {
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name String
+  startDate DateTime
+  endDate DateTime?
+  description String
+  tags String[]
+  version Int @default(1)
+  createdAt DateTime @default(now())
+}
+
+model CV {
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete:Cascade)
+  positionId Int
+  position Position @relation(fields:[positionId], references: [id], onDelete: Cascade)
+  isPublished Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, positionId])
 }

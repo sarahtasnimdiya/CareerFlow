@@ -61,12 +61,6 @@
     const { name, description, type, categoryId } = req.body;
 
     try {
-        const nameExists = await prisma.attribute.findUnique({ where: { name } });
-
-        if (nameExists) {
-            return res.status(400).json({ message: 'Attribute with this name already exists' });
-        }
-
         const attribute = await prisma.attribute.create({
             data: {
                 name,
@@ -80,6 +74,9 @@
     }
     catch (error) {
         console.error(error);
+        if (error.code === 'P2002') {
+            return res.status(409).json({ message: 'Attribute with this name already exists' });
+        }
         if (error.code === 'P2003') {
             return res.status(400).json({ message: 'Invalid categoryId, no such category exists' });
         }

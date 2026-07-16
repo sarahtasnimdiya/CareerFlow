@@ -22,9 +22,14 @@ function AttributePage() {
   useEffect(() => {
     const stored = localStorage.getItem('recentAttributes');
     const ids = stored ? JSON.parse(stored) : [];
-    Promise.all(
-    ids.map(id => fetchWithAuth(import.meta.env.VITE_API_URL + `/api/attributes/${id}`))
-    ).then(results => setRecentAttributes(results));
+    Promise.allSettled(
+      ids.map(id => fetchWithAuth(import.meta.env.VITE_API_URL + `/api/attributes/${id}`))
+    ).then(results => {
+      const successful = results
+        .filter(r => r.status === 'fulfilled' && !r.value.message)
+        .map(r => r.value);
+      setRecentAttributes(successful);
+    });
   }, [attributes]);
 
 
