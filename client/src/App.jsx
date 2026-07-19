@@ -11,6 +11,7 @@ import AddPositionPage from "./AddPositionPage.jsx";
 import EditPositionPage from "./EditPositionPage.jsx";
 import ProfilePage from "./ProfilePage.jsx";
 import CVPage from "./CVPage.jsx";
+import HomePage from "./HomePage.jsx";
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
       <Route path="/edit-position/:id" element={<EditPositionPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/cv/:id" element={<CVPage />} />
+      <Route path="/" element={<HomePage />} />
     </Routes>
     </>
   );

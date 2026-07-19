@@ -1,15 +1,27 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchWithAuth } from './lib/api';
+import { jwtDecode } from "jwt-decode";
 
 function CVPage() {
   const { id } = useParams();
   const [cv, setCv] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        const decoded = jwtDecode(token);
+        setUserRole(decoded.role);
+    }
+  }, []);
 
   useEffect(() => {
     fetchWithAuth(import.meta.env.VITE_API_URL + `/api/cvs/${id}`)
       .then(data => setCv(data));
   }, [id]);
+
+  
 
   function handleAttributeChange(attributeId, newValue) {
     setCv(prev => ({
@@ -51,6 +63,8 @@ function CVPage() {
   if (!cv) return <p className="p-4">Loading...</p>;
   if (cv.error) return <p className="p-4 text-red-600">{cv.error}</p>;
 
+  const canEdit = userRole === 'CANDIDATE';
+
   return (
     <div className="p-8 max-w-2xl">
       <h1 className="text-2xl font-bold mb-4">{cv.position.title}</h1>
@@ -69,12 +83,18 @@ function CVPage() {
           return (
             <div key={pa.attributeId} className="flex gap-2 items-center">
               <span className="w-32">{pa.attribute.name}</span>
-              <input
-                className={`border p-1 rounded ${isEmpty ? "border-red-600 text-red-600" : ""}`}
-                value={value}
-                onChange={(e) => handleAttributeChange(pa.attributeId, e.target.value)}
-                onBlur={() => saveAttribute(pa.attributeId, pv?.version)}
+              {canEdit ? (
+                <input
+                    className={`border p-1 rounded ${isEmpty ? "border-red-600 text-red-600" : ""}`}
+                    value={value}
+                    onChange={(e) => handleAttributeChange(pa.attributeId, e.target.value)}
+                    onBlur={() => saveAttribute(pa.attributeId, pv?.version)}
                 />
+                ) : (
+                <span className={isEmpty ? "text-red-600" : ""}>
+                    {isEmpty ? "(empty)" : value}
+                </span>
+                )}
             </div>
           );
         })}
@@ -91,7 +111,7 @@ function CVPage() {
       </div>
 
 
-      {!cv.isPublished && (
+      {canEdit && !cv.isPublished && (
       <button
         className="mt-4 bg-orange text-ink font-semibold px-4 py-2 rounded"
         disabled={cv.position.attributes.some(pa => {

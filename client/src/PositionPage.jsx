@@ -108,6 +108,20 @@ function PositionPage() {
         .catch(error => console.error(error));
     }
 
+    function handleCreateCV(positionId) {
+      fetchWithAuth(import.meta.env.VITE_API_URL + "/api/cvs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ positionId })
+      }).then(data => {
+        if (data.error) {
+          alert(data.error);
+        } else {
+          navigate(`/cv/${data.id}`);
+        }
+      });
+    }
+
   console.log(positions);
 
   return (
@@ -135,6 +149,9 @@ function PositionPage() {
           <button onClick={handleDelete}>Delete</button>
         </>
       )}
+      {userRole === 'CANDIDATE' && selectedId && (
+          <button onClick={() => handleCreateCV(selectedId)}>Create CV</button>
+        )}
       </div>
         <Table>
           <Table.ScrollContainer>

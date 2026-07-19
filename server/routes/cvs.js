@@ -28,11 +28,18 @@ router.post('/', authenticate, requireRole(['CANDIDATE']), async (req, res) => {
 
 router.get('/:id', authenticate, async (req, res) => {
     const cvId = parseInt(req.params.id);
-    const userId = req.user.userId;
+    const requesterId = req.user.userId;
+    const requesterRole = req.user.role;
 
     try {
         const cv = await prisma.cV.findFirst({
-            where: { id: cvId, userId },
+            where: { 
+                id: cvId, 
+                 OR: [
+                    { userId: requesterId },
+                    { isPublished: true }
+                ]
+            },
             include: {
                 position: {
                     include: {
@@ -55,8 +62,14 @@ router.get('/:id', authenticate, async (req, res) => {
             return res.status(404).json({ error: 'CV not found' });
         }
 
+        const isOwner = cv.userId === requesterId;
+        const isStaff = requesterRole === 'RECRUITER' || requesterRole === 'ADMIN';
+        if (!isOwner && !isStaff) {
+            return res.status(403).json({ error: 'Not authorized to view this CV' });
+        }
+
         const projects = await prisma.project.findMany({
-            where: { userId, tags: { hasSome: cv.position.projectTags } },
+            where: { userId: cv.userId, tags: { hasSome: cv.position.projectTags } },
             take: cv.position.maxProjects,
             orderBy: { createdAt: 'desc' }
         });

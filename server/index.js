@@ -16,6 +16,7 @@ const positionRoutes = require('./routes/positions');
 const profileRoutes = require('./routes/profile');
 const projectRoutes = require('./routes/projects');
 const cvRoutes = require('./routes/cvs');
+const statsRoutes = require('./routes/stats');
 
 
 const passport = require('./config/passport');
@@ -33,6 +34,7 @@ app.use('/api/positions', positionRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/cvs', cvRoutes);
+app.use('/api/stats', statsRoutes);
 
 
 

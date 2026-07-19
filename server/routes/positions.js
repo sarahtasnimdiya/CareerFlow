@@ -38,6 +38,56 @@
 
 });
 
+router.get('/latest', async (req, res) => {
+  try {
+    const positions = await prisma.position.findMany({
+      where: { isPublic: true },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    });
+    res.json(positions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching latest positions' });
+  }
+});
+
+router.get('/popular', async (req, res) => {
+  try {
+    const positions = await prisma.position.findMany({
+      where: { isPublic: true },
+      include: { _count: { select: { cvs: true } } },
+      orderBy: { cvs: { _count: 'desc' } },
+      take: 5
+    });
+    res.json(positions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching popular positions' });
+  }
+});
+
+router.get('/tags', async (req, res) => {
+  try {
+    const positions = await prisma.position.findMany({
+      where: { isPublic: true },
+      select: { projectTags: true }
+    });
+
+    const counts = {};
+    positions.forEach(p => {
+      p.projectTags.forEach(tag => {
+        counts[tag] = (counts[tag] || 0) + 1;
+      });
+    });
+
+    res.json(counts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching tags' });
+  }
+});
+
 router.get('/:id', authenticate, async (req, res) => {
     const id = parseInt(req.params.id);
     try {
