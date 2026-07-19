@@ -4,6 +4,7 @@ import {jwtDecode} from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 import { fetchWithAuth } from "./lib/api";
+import { btnPrimary, btnSecondary, inputStyle, pageContainer } from "./lib/styles";
 
 
 function AttributePage() {
@@ -96,7 +97,7 @@ function AttributePage() {
   console.log(attributes);
 
   return (
-    <div>
+    <div className={pageContainer}>
       {recentAttributes.length > 0 && (
       <div className="mb-4 text-sm text-navy">
         Recently used: {recentAttributes.map(a => a.name).join(', ')}
@@ -106,7 +107,7 @@ function AttributePage() {
       <Input placeholder="Search attributes..."  
       value={searchTerm} 
       onChange={(e) => setSearchTerm(e.target.value)} />
-      <select value={selectCategory} onChange={selectCategoryHandler}>
+      <select className={inputStyle} value={selectCategory} onChange={selectCategoryHandler}>
         <option value="">All Categories</option>
           {categories.map(category => (
             <option key={category.id} value={category.id}>
@@ -116,12 +117,18 @@ function AttributePage() {
       </select>
       
       {(userRole === 'RECRUITER' || userRole === 'ADMIN' ) && (
-        <button onClick={() => navigate('/add-attribute')}> + Add Attribute</button>
+        <button className={btnPrimary} onClick={() => navigate('/add-attribute')}>
+          + Add Attribute
+        </button>
       )}
       {(userRole === 'RECRUITER' || userRole === 'ADMIN') && selectedId && (
         <>
-          <button onClick={() => navigate(`/edit-attribute/${selectedId}`)}>Edit</button>
-          <button onClick={handleDelete}>Delete</button>
+          <button className={btnSecondary} onClick={() => navigate(`/edit-attribute/${selectedId}`)}>
+            Edit
+          </button>
+          <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors" onClick={handleDelete}>
+            Delete
+          </button>
         </>
       )}
       </div>
@@ -134,11 +141,11 @@ function AttributePage() {
               setSelectedId(id);
             }}
             >
-              <Table.Header>
-                <Table.Column isRowHeader>Name</Table.Column>
-                <Table.Column>Description</Table.Column>
-                <Table.Column>Type</Table.Column>
-                <Table.Column>Category</Table.Column>
+              <Table.Header >
+                <Table.Column isRowHeader >Name</Table.Column>
+                <Table.Column >Description</Table.Column>
+                <Table.Column >Type</Table.Column>
+                <Table.Column >Category</Table.Column>
               </Table.Header>
               <Table.Body>
                 {attributes.map(attribute => (

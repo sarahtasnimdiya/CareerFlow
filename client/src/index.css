@@ -8,3 +8,15 @@
   --color-gray-light: #E5E5E5;
   --color-champagne: #F5F0E6;
 }
+
+@layer components {
+  .table {
+    @apply border border-navy rounded-lg overflow-hidden;
+  }
+  .table__header {
+    @apply bg-ink;
+  }
+  .table__column {
+    @apply text-champagne;
+  }
+}

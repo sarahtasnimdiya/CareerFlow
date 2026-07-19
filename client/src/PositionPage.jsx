@@ -4,6 +4,7 @@ import {jwtDecode} from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 import { fetchWithAuth } from "./lib/api";
+import { btnPrimary, btnSecondary, inputStyle, pageContainer } from "./lib/styles";
 
 
 function PositionPage() {
@@ -125,12 +126,12 @@ function PositionPage() {
   console.log(positions);
 
   return (
-    <div>
+    <div className={pageContainer}>
       <div className="flex gap-3 mb-4 items-center">
       <Input placeholder="Search positions..."  
       value={searchTerm} 
       onChange={(e) => setSearchTerm(e.target.value)} />
-      <select value={selectAttribute} onChange={selectAttributeHandler}>
+      <select className={inputStyle} value={selectAttribute} onChange={selectAttributeHandler}>
         <option value="">All Attributes</option>
           {attributes.map(attribute => (
             <option key={attribute.id} value={attribute.id}>
@@ -140,17 +141,27 @@ function PositionPage() {
       </select>
       
       {(userRole === 'RECRUITER' || userRole === 'ADMIN' ) && (
-        <button onClick={() => navigate('/add-position')}> + Add Position</button>
+        <button className={btnPrimary} onClick={() => navigate('/add-position')}>
+          + Add Position
+        </button>
       )}
       {(userRole === 'RECRUITER' || userRole === 'ADMIN') && selectedId && (
         <>
-          <button onClick={() => navigate(`/edit-position/${selectedId}`)}>Edit</button>
-          <button onClick={handleDuplicate}>Duplicate</button>
-          <button onClick={handleDelete}>Delete</button>
+          <button className={btnSecondary} onClick={() => navigate(`/edit-position/${selectedId}`)}>
+            Edit
+          </button>
+          <button className={btnSecondary} onClick={handleDuplicate}>
+            Duplicate
+          </button>
+          <button className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors" onClick={handleDelete}>
+            Delete
+          </button>
         </>
       )}
       {userRole === 'CANDIDATE' && selectedId && (
-          <button onClick={() => handleCreateCV(selectedId)}>Create CV</button>
+          <button className={btnPrimary} onClick={() => handleCreateCV(selectedId)}>
+            Create CV
+          </button>
         )}
       </div>
         <Table>

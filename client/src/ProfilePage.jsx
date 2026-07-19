@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchWithAuth } from "./lib/api";
+import { btnPrimary, btnSecondary, inputStyle, labelStyle, card, pageContainer } from "./lib/styles";
 
 function ProfilePage() {
   const [user, setUser] = useState(null);
@@ -110,102 +111,112 @@ function ProfilePage() {
   console.log(projects);
 
   return (
-    <div className="p-8 flex flex-col gap-8 max-w-2xl">
+    <div className={pageContainer}>
       <h1 className="text-2xl font-bold">Profile</h1>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Me</h2>
-        <div className="flex flex-col gap-3">
+      <section className={card}>
+        <h2 className="text-lg font-semibold mb-4 text-navy">Me</h2>
+        <div className="grid grid-cols-2 gap-4">
           {builtIn.map(attr => (
-            <div key={attr.id} className="flex gap-2 items-center">
-              <label className="w-32">{attr.name}</label>
+            <div key={attr.id} className="flex flex-col gap-1">
+              <label className={labelStyle}>{attr.name}</label>
+              <div className="flex gap-2">
               <input
-                className="border p-2 rounded flex-1"
+                className={`${inputStyle} flex-1`}
                 value={values[attr.id]?.text || ""}
                 onChange={(e) => handleTextChange(attr.id, e.target.value)}
               />
-              <button onClick={() => saveValue(attr.id)}>Save</button>
-              {statusMsg[attr.id] && <span className="text-sm">{statusMsg[attr.id]}</span>}
+              <button  className={btnPrimary} onClick={() => saveValue(attr.id)}>
+                Save
+              </button>
+              </div>
+              {statusMsg[attr.id] && <span className="text-xs text-navy">{statusMsg[attr.id]}</span>}
             </div>
           ))}
         </div>
       </section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Info</h2>
-        <div className="flex flex-col gap-3">
+      <section className={card}>
+        <h2 className="text-lg font-semibold mb-4 text-navy">Info</h2>
+        <div className="grid grid-cols-2 gap-4 mb-4">
           {infoAttrs.map(attr => (
-            <div key={attr.id} className="flex gap-2 items-center">
-              <label className="w-32">{attr.name}</label>
+            <div key={attr.id} className="flex flex-col gap-1">
+              <label className={labelStyle}>{attr.name}</label>
+              <div className="flex gap-2">
               <input
-                className="border p-2 rounded flex-1"
+                className={`${inputStyle} flex-1`}
                 value={values[attr.id]?.text || ""}
                 onChange={(e) => handleTextChange(attr.id, e.target.value)}
               />
-              <button onClick={() => saveValue(attr.id)}>Save</button>
-              <button onClick={() => removeValue(attr.id)}>Remove</button>
-              {statusMsg[attr.id] && <span className="text-sm">{statusMsg[attr.id]}</span>}
+              <button className={btnPrimary} onClick={() => saveValue(attr.id)}>Save</button>
+              <button className={btnSecondary} onClick={() => removeValue(attr.id)}>Remove</button>
+              </div>
             </div>
           ))}
+        </div>
 
-          <div className="flex gap-2 items-center">
-            <select value={addAttrId} onChange={(e) => setAddAttrId(e.target.value)}>
+
+          <div className="flex gap-2 items-center border-t border-gray-light pt-4">
+            <select className={inputStyle} value={addAttrId} onChange={(e) => setAddAttrId(e.target.value)}>
               <option value="">Add attribute...</option>
               {availableToAdd.map(a => (
                 <option key={a.id} value={a.id}>{a.name}</option>
               ))}
             </select>
-            <button onClick={addLibraryAttr}>Add</button>
+            <button className={btnPrimary} onClick={addLibraryAttr}>
+              Add
+            </button>
           </div>
-        </div>
       </section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Projects</h2>
-        <div className="flex flex-col gap-3">
+      <section className={card}>
+        <h2 className="text-lg font-semibold mb-4 text-navy">Projects</h2>
+        <div className="grid grid-cols-2 gap-4 mb-4">
             {projects.map(project => (
-            <div key={project.id} className="border p-3 rounded">
+            <div key={project.id} className="border border-gray-light rounded-lg p-3 bg-champagne">
                 <p className="font-semibold">{project.name}</p>
-                <p className="text-sm">{project.startDate?.slice(0, 10)} — {project.endDate ? project.endDate.slice(0, 10) : 'Present'}</p>
-                <p>{project.description}</p>
-                <p className="text-sm text-navy">{project.tags.join(', ')}</p>
-                <button onClick={() => handleDeleteProject(project.id)}>Delete</button>
+                <p className="text-sm text-navy">{project.startDate?.slice(0, 10)} — {project.endDate ? project.endDate.slice(0, 10) : 'Present'}</p>
+                <p className="text-sm mt-1">{project.description}</p>
+                <p className="text-sm text-navy mt-1">{project.tags.join(', ')}</p>
+                <button className="mt-2 text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors" onClick={() => handleDeleteProject(project.id)}>Delete</button>
             </div>
             ))}
         </div>
 
-        <div className="border p-3 rounded flex flex-col gap-2">
+        <div className="border-t border-gray-light pt-4 flex flex-col gap-2 max-w-md">
             <input
-                className="border p-2 rounded"
+                className={inputStyle}
                 placeholder="Project name"
                 value={newProjectName}
                 onChange={(e) => setNewProjectName(e.target.value)}
             />
             <input
-                className="border p-2 rounded"
+                className={inputStyle}
                 type="date"
                 value={newProjectStart}
                 onChange={(e) => setNewProjectStart(e.target.value)}
             />
             <input
-                className="border p-2 rounded"
+                className={inputStyle}
                 type="date"
                 value={newProjectEnd}
                 onChange={(e) => setNewProjectEnd(e.target.value)}
             />
             <textarea
-                className="border p-2 rounded"
+                className={inputStyle}
                 placeholder="Description"
                 value={newProjectDescription}
                 onChange={(e) => setNewProjectDescription(e.target.value)}
             />
             <input
-                className="border p-2 rounded"
+                className={inputStyle}
                 placeholder="Tags (comma separated)"
                 value={newProjectTags}
                 onChange={(e) => setNewProjectTags(e.target.value)}
             />
-            <button onClick={handleAddProject}>Add Project</button>
+            <button className={btnPrimary} onClick={handleAddProject}>
+              Add Project
+            </button>
         </div>
 
         </section>

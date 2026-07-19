@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchWithAuth } from './lib/api';
+import { btnPrimary, btnSecondary, inputStyle, pageContainer, card } from "./lib/styles";
 
 function HomePage() {
   const [stats, setStats] = useState(null);
@@ -16,21 +17,28 @@ function HomePage() {
   }, []);
 
   return (
-    <div className="p-8 flex flex-col gap-8">
+    <div className= {pageContainer}>
       <h1 className="text-3xl font-bold">CareerFlow</h1>
 
       {stats && (
-        <section className="flex gap-6 flex-wrap">
-          <div><strong>{stats.totalPositions}</strong> Positions</div>
-          <div><strong>{stats.totalCandidates}</strong> Candidates</div>
-          <div><strong>{stats.totalRecruiters}</strong> Recruiters</div>
-          <div><strong>{stats.totalCVs}</strong> CVs</div>
-          <div><strong>{stats.recentCVs}</strong> CVs in last 24h</div>
+        <section className="flex gap-4 flex-wrap">
+          {[
+            ["Positions", stats.totalPositions],
+            ["Candidates", stats.totalCandidates],
+            ["Recruiters", stats.totalRecruiters],
+            ["CVs", stats.totalCVs],
+            ["CVs (24h)", stats.recentCVs]
+          ].map(([label, value]) => (
+            <div key={label} className={`${card} flex-1 min-w-[120px] text-center`}>
+              <p className="text-2xl font-bold text-orange">{value}</p>
+              <p className="text-sm text-navy">{label}</p>
+            </div>
+          ))}
         </section>
       )}
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Latest Positions</h2>
+      <section className={card}>
+        <h2 className="text-lg font-semibold mb-2 text-navy">Latest Positions</h2>
         <table className="w-full text-left">
           <thead>
             <tr><th>Title</th><th>Created</th></tr>
@@ -46,8 +54,8 @@ function HomePage() {
         </table>
       </section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Most Popular Positions</h2>
+      <section className={card}>
+        <h2 className="text-lg font-semibold mb-2 text-navy">Most Popular Positions</h2>
         <table className="w-full text-left">
           <thead>
             <tr><th>Title</th><th>CVs Submitted</th></tr>
@@ -63,8 +71,8 @@ function HomePage() {
         </table>
       </section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-2">Tag Cloud</h2>
+      <section className={card}>
+        <h2 className="text-lg font-semibold mb-2 text-navy">Tag Cloud</h2>
         <div className="flex gap-3 flex-wrap">
           {Object.entries(tags).map(([tag, count]) => (
             <span
