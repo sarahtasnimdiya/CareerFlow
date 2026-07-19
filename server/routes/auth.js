@@ -19,7 +19,13 @@ router.post('/register', async (req, res) => {
           role: 'CANDIDATE'
         }
       });
-      res.status(201).json({ message: 'User created successfully' });
+      const token = jwt.sign({ 
+        userId: user.id, 
+        role: user.role 
+      }, 
+      process.env.JWT_SECRET, 
+      { expiresIn: '7d' });
+      res.status(201).json({ message: 'User created successfully', token });
     } catch (error) {
     console.error(error);
     if (error.code === 'P2002') {

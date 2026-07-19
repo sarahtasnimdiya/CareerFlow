@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { fetchWithAuth } from "./lib/api";
 import { btnPrimary, btnSecondary, inputStyle, labelStyle, card, pageContainer } from "./lib/styles";
+import {TagsInput} from "react-tag-input-component";
+import ReactMarkdown from 'react-markdown';
 
 function ProfilePage() {
   const [user, setUser] = useState(null);
@@ -13,7 +15,7 @@ function ProfilePage() {
   const [projects, setProjects] = useState([]);const [newProjectName, setNewProjectName] = useState("");
   const [newProjectStart, setNewProjectStart] = useState("");
   const [newProjectEnd, setNewProjectEnd] = useState("");
-  const [newProjectDescription, setNewProjectDescription] = useState("");const [newProjectTags, setNewProjectTags] = useState("");
+  const [newProjectDescription, setNewProjectDescription] = useState("");const [newProjectTags, setNewProjectTags] = useState([]);
 
   function loadAll() {
     Promise.all([
@@ -90,14 +92,14 @@ function ProfilePage() {
         startDate: newProjectStart,
         endDate: newProjectEnd || null,
         description: newProjectDescription,
-        tags: newProjectTags.split(',').map(t => t.trim()).filter(Boolean)
+        tags: newProjectTags
         })
     }).then(() => {
         setNewProjectName("");
         setNewProjectStart("");
         setNewProjectEnd("");
         setNewProjectDescription("");
-        setNewProjectTags("");
+        setNewProjectTags([]);
         loadProjects();
     });
     }
@@ -176,7 +178,9 @@ function ProfilePage() {
             <div key={project.id} className="border border-gray-light rounded-lg p-3 bg-champagne">
                 <p className="font-semibold">{project.name}</p>
                 <p className="text-sm text-navy">{project.startDate?.slice(0, 10)} — {project.endDate ? project.endDate.slice(0, 10) : 'Present'}</p>
-                <p className="text-sm mt-1">{project.description}</p>
+                <div className="text-sm mt-1 prose prose-sm max-w-none">
+                  <ReactMarkdown>{project.description}</ReactMarkdown>
+                </div>
                 <p className="text-sm text-navy mt-1">{project.tags.join(', ')}</p>
                 <button className="mt-2 text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition-colors" onClick={() => handleDeleteProject(project.id)}>Delete</button>
             </div>
@@ -208,11 +212,12 @@ function ProfilePage() {
                 value={newProjectDescription}
                 onChange={(e) => setNewProjectDescription(e.target.value)}
             />
-            <input
+            <TagsInput
                 className={inputStyle}
-                placeholder="Tags (comma separated)"
                 value={newProjectTags}
-                onChange={(e) => setNewProjectTags(e.target.value)}
+                onChange={setNewProjectTags}
+                name="tags"
+                placeHolder="Type a tag and press Enter"
             />
             <button className={btnPrimary} onClick={handleAddProject}>
               Add Project

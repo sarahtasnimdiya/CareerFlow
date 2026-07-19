@@ -1,6 +1,6 @@
 import { useState , useEffect, useRef } from "react";
 import { Button, Input, TextField, Label } from "@heroui/react";
-import {Link, useSearchParams} from "react-router-dom";
+import {Link, useSearchParams, useNavigate} from "react-router-dom";
 
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
@@ -9,6 +9,7 @@ function LoginForm() {
     const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
 
     const hasExchanged = useRef(false);
 
@@ -26,6 +27,7 @@ function LoginForm() {
             .then(data => {
                 if (data.token) {
                     localStorage.setItem("token", data.token);
+                    navigate("/");
                 }
             });
         }
@@ -47,6 +49,7 @@ function LoginForm() {
          if (data.token) 
             {
             localStorage.setItem("token", data.token);
+            navigate("/");
         }
     }
     
